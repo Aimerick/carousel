@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>轮播</title>
+        <style>
+            body{
+              background: #eee;
+            }
+            
+            ul, li{
+                list-style: none;
+                margin: 0;
+                padding: 0;
+            }
+
+            a{
+                text-decoration: none;
+            }
+
+            .carousel{
+                position: relative;
+                width: 1000px;
+                height: 600px;
+                overflow: hidden;
+                margin: 0 auto;
+                margin-top: 20px;
+                border-radius: 6px;
+                box-shadow: 0 0 6px #646464;
+            }
+
+            .container{
+                position: absolute;
+                width: 1200px;
+                height: 200px;
+                left: -1000px;
+            }
+
+            .container:after{
+                content: '';
+                display: block;
+                clear: both;
+            }
+            .container img{
+                width: 1000px;
+                height: 600px;
+                float: left;
+            }
+
+            .carousel .btn{
+                border-radius: 50%;
+                line-height: 40px;
+                text-align: center;
+                background: #4E443C;
+                color: #fff;
+                width: 40px;
+                height: 40px;
+                position: absolute;
+                top: 50%;
+                margin-top: -15px;
+                opacity: 0.8;
+                box-shadow: 0 0 2px #999;
+            }
+
+            .btn:hover{
+                opacity: 1;
+            }
+
+            .btn.pre{
+                right: 10px;
+            }
+
+            .btn.next{
+                left: 10px;
+            }
+
+            ul.bullet{
+                position: absolute;
+                bottom: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .bullet li{
+                width: 16px;
+                height: 4px;
+                background: #fff;
+                border-radius: 2px;
+                display: inline-block;
+                cursor: pointer;
+            }
+
+            .bullet li.active{
+                background: #888;
+            }
+
+
+        </style>
+    </head>
+    <body>
+        <div class="carousel">
+            <ul class="container">
+                <li data-index=0><a href=""><img src="http://img.kutoo8.com/upload/image/65386781/139-15031Q55934_960x540.jpg" alt=""></a></li>
+                <li data-index=1><a href=""><img src="http://tupian.enterdesk.com/2015/lcx/1/21/2/10.jpg" alt=""></a></li>
+                <li data-index=2><a href=""><img  src="http://a-ssl.duitang.com/uploads/item/201608/17/20160817123820_4aurV.jpeg" alt=""></a></li>
+                <li data-index=3><a href=""><img src="http://img3.91.com/uploads/allimg/130418/32-13041Q50306.jpg" alt=""></a></li>
+            </ul>
+            <a href="#" class="btn pre">»</a>
+            <a href="#" class="btn next">«</a>
+            <ul class="bullet">
+                <li class="active"></li>
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+        <script>
+            var $bullet = $('.bullet'),
+                $preBtn = $('.btn.pre'),
+                $nextBtn = $('.btn.next'),
+                $container = $('.container'),
+                $items = $('.container').children(),
+                imgCount = $('.container').children().length;
+
+            var $firstImg = $container.find('li').first();
+            var $lastImg = $container.find('li').last();
+
+            var curPageIndex = 0;
+            var imgLength = $container.children().length;
+
+            var ischange = false;
+            
+            $container.prepend($lastImg.clone());
+            $container.append($firstImg.clone());
+
+            $container.width($firstImg.width()*($container.children().length));
+
+            play(0);
+            autoPlay();
+
+            $preBtn.on('click', function(){
+              
+                playNext();                            
+            })
+
+            $nextBtn.on('click', function(){
+   
+                playPre();                         
+            })
+
+            $('.bullet li').on('click', function(){
+                var ind = $(this).index();
+                play(ind);          
+            })
+
+        
+            
+            function autoPlay(){
+                var colck = setInterval(function(){
+                    playNext();
+                }, 2000);
+            }
+
+            function play(ind){
+                if(ischange) return;
+
+                ischange = true;
+                $items.eq(curPageIndex).fadeOut(500);
+                $items.eq(ind).fadeIn(500, function(){
+                    ischange = false;
+                })
+
+                curPageIndex = ind;
+                setBullet();
+            }
+           
+            function playNext(){
+                play((curPageIndex+1)%imgCount);
+            }
+
+            function playPre(){
+                play((imgCount+curPageIndex-1)%imgCount);
+            }
+
+            function setBullet(){
+                $bullet.children().removeClass('active')
+                       .eq(curPageIndex).addClass('active');
+            }
+        </script>
+    </body>
+</html>
